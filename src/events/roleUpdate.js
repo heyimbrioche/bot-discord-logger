@@ -1,4 +1,5 @@
 const Logger = require('../utils/logger');
+const PermissionManager = require('../utils/permissions');
 
 module.exports = {
     name: 'roleUpdate',
@@ -6,12 +7,12 @@ module.exports = {
         const logger = new Logger(client);
         
         try {
-            const auditLogs = await newRole.guild.fetchAuditLogs({
+            const auditResult = await PermissionManager.fetchAuditLogsSafe(newRole.guild, {
                 type: 31, // ROLE_UPDATE
                 limit: 1
             });
             
-            const executor = auditLogs.entries.first()?.executor;
+            const executor = auditResult.executor;
             
             const changes = [];
             

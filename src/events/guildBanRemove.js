@@ -1,4 +1,5 @@
 const Logger = require('../utils/logger');
+const PermissionManager = require('../utils/permissions');
 
 module.exports = {
     name: 'guildBanRemove',
@@ -6,12 +7,12 @@ module.exports = {
         const logger = new Logger(client);
         
         try {
-            const auditLogs = await ban.guild.fetchAuditLogs({
+            const auditResult = await PermissionManager.fetchAuditLogsSafe(ban.guild, {
                 type: 23, // MEMBER_BAN_REMOVE
                 limit: 1
             });
             
-            const executor = auditLogs.entries.first()?.executor;
+            const executor = auditResult.executor;
             
             await logger.sendLog(ban.guild.id, 'member_unbanned', {
                 user: ban.user,

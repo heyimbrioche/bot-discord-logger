@@ -1,4 +1,5 @@
 const Logger = require('../utils/logger');
+const PermissionManager = require('../utils/permissions');
 
 module.exports = {
     name: 'channelUpdate',
@@ -6,12 +7,12 @@ module.exports = {
         const logger = new Logger(client);
         
         try {
-            const auditLogs = await newChannel.guild.fetchAuditLogs({
+            const auditResult = await PermissionManager.fetchAuditLogsSafe(newChannel.guild, {
                 type: 11, // CHANNEL_UPDATE
                 limit: 1
             });
             
-            const executor = auditLogs.entries.first()?.executor;
+            const executor = auditResult.executor;
             
             const changes = [];
             

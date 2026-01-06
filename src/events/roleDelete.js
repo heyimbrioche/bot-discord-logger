@@ -1,4 +1,5 @@
 const Logger = require('../utils/logger');
+const PermissionManager = require('../utils/permissions');
 
 module.exports = {
     name: 'roleDelete',
@@ -6,12 +7,12 @@ module.exports = {
         const logger = new Logger(client);
         
         try {
-            const auditLogs = await role.guild.fetchAuditLogs({
+            const auditResult = await PermissionManager.fetchAuditLogsSafe(role.guild, {
                 type: 32, // ROLE_DELETE
                 limit: 1
             });
             
-            const executor = auditLogs.entries.first()?.executor;
+            const executor = auditResult.executor;
             
             await logger.sendLog(role.guild.id, 'role_deleted', {
                 role: role,

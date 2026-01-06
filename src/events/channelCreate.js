@@ -1,4 +1,5 @@
 const Logger = require('../utils/logger');
+const PermissionManager = require('../utils/permissions');
 
 module.exports = {
     name: 'channelCreate',
@@ -6,16 +7,14 @@ module.exports = {
         const logger = new Logger(client);
         
         try {
-            const auditLogs = await channel.guild.fetchAuditLogs({
+            const auditResult = await PermissionManager.fetchAuditLogsSafe(channel.guild, {
                 type: 10, // CHANNEL_CREATE
                 limit: 1
             });
             
-            const executor = auditLogs.entries.first()?.executor;
-            
             await logger.sendLog(channel.guild.id, 'channel_created', {
                 channel: channel,
-                executor: executor,
+                executor: auditResult.executor,
                 id: channel.id,
                 description: `Salon ${channel.name} créé`,
             });

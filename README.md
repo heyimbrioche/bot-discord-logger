@@ -53,6 +53,25 @@ DEFAULT_LANGUAGE=fr
 - `/loggersetup` - Configurez les logs du serveur
 - `/logs` - Affichez les statistiques des logs
 - `/loginfo` - Informations sur la configuration des logs
+- `/permissions` - Vérifie les permissions du bot sur le serveur
+
+### Permissions Requises
+
+Le bot nécessite certaines permissions pour fonctionner correctement :
+
+**Permissions minimales (obligatoires) :**
+- Voir le salon (`ViewChannel`)
+- Envoyer des messages (`SendMessages`)
+- Intégrer des liens (`EmbedLinks`)
+- Lire l'historique des messages (`ReadMessageHistory`)
+
+**Permissions recommandées :**
+- Voir les journaux d'audit (`ViewAuditLog`) - Permet d'afficher qui a effectué les actions
+
+**Permissions utilisateur :**
+- Gérer le serveur (`ManageGuild`) - Pour utiliser `/loggersetup`
+
+📖 **Pour plus de détails, consultez [PERMISSIONS.md](PERMISSIONS.md)**
 
 ## 📁 Structure du projet
 
@@ -69,6 +88,16 @@ discord-bot-logger/
 ├── package.json
 └── README.md
 ```
+
+## 🔒 Sécurité et Permissions
+
+Le bot gère automatiquement les permissions et vous notifie si des permissions manquantes sont détectées. Utilisez `/permissions` pour vérifier la configuration actuelle.
+
+Le système de permissions est robuste et gère :
+- ✅ Vérification des permissions avant chaque action
+- ✅ Messages d'erreur clairs en cas de permissions manquantes
+- ✅ Gestion sécurisée des audit logs
+- ✅ Validation des permissions lors de la configuration
 
 ## 🔧 Développement
 

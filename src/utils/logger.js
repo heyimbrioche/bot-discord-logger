@@ -1,6 +1,7 @@
 const { EmbedBuilder, Colors } = require('discord.js');
 const { getDatabase } = require('./database');
 const translations = require('../config/translations');
+const PermissionManager = require('./permissions');
 
 class Logger {
     constructor(client) {
@@ -12,7 +13,10 @@ class Logger {
             const db = getDatabase(guildId);
             const guild = this.client.guilds.cache.get(guildId);
             
-            if (!guild) return false;
+            if (!guild) {
+                console.warn(`[Logger] Guild ${guildId} introuvable`);
+                return false;
+            }
 
             // Vérifier si ce type de log est activé
             const logConfig = db.get('logConfig') || [];
@@ -23,10 +27,20 @@ class Logger {
             if (!logChannelId) return false;
 
             const logChannel = guild.channels.cache.get(logChannelId);
-            if (!logChannel) return false;
+            if (!logChannel) {
+                console.warn(`[Logger] Salon ${logChannelId} introuvable pour le serveur ${guildId}`);
+                return false;
+            }
 
-            // Vérifier les permissions
-            if (!logChannel.permissionsFor(guild.members.me)?.has(['SendMessages', 'EmbedLinks'])) {
+            // Vérifier les permissions du bot dans le salon
+            const requiredPerms = PermissionManager.getRequiredLogChannelPermissions();
+            const permCheck = PermissionManager.checkBotPermissions(logChannel, requiredPerms);
+            
+            if (!permCheck.has) {
+                console.warn(`[Logger] Permissions manquantes dans ${logChannel.name} (${guild.name}): ${permCheck.missing.join(', ')}`);
+                
+                // Notifier l'administrateur une seule fois (optionnel, pour éviter le spam)
+                // Vous pouvez implémenter un système de cache pour éviter de spammer
                 return false;
             }
 

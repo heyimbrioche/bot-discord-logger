@@ -1,7 +1,8 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, ChannelType } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, ChannelType, PermissionFlagsBits } = require('discord.js');
 const { EmbedBuilder } = require('discord.js');
 const { getDatabase } = require('../utils/database');
 const translations = require('../config/translations');
+const PermissionManager = require('../utils/permissions');
 const fs = require('fs');
 const path = require('path');
 
@@ -9,6 +10,17 @@ module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
         try {
+            // Ignorer les interactions en DM
+            if (!interaction.guild) {
+                if (interaction.isRepliable()) {
+                    return interaction.reply({
+                        content: '❌ Ce bot ne fonctionne que dans les serveurs Discord.',
+                        ephemeral: true
+                    });
+                }
+                return;
+            }
+
             // Gestion des commandes slash
             if (interaction.isCommand()) {
                 const commandPath = path.join(__dirname, '../commands', `${interaction.commandName}.js`);
@@ -24,7 +36,23 @@ module.exports = {
                 const db = getDatabase(interaction.guildId);
                 const lang = translations[db.get('language')] || translations.fr;
 
+                // Vérifier les permissions pour la configuration
                 if (interaction.customId === 'config-logs') {
+                    const permCheck = PermissionManager.checkMemberPermissions(
+                        interaction.member,
+                        PermissionManager.getRequiredConfigPermissions()
+                    );
+
+                    if (!permCheck.has) {
+                        return interaction.reply({
+                            content: PermissionManager.getMissingPermissionsMessage(
+                                interaction.guildId,
+                                permCheck.missing,
+                                false
+                            ),
+                            ephemeral: true
+                        });
+                    }
                     const logSelectionEmbed = new EmbedBuilder()
                         .setTitle(lang.selectLogs)
                         .setDescription(lang.selectLogsDesc)
@@ -109,10 +137,52 @@ module.exports = {
 
                 // Sélection du salon pour les logs
                 if (interaction.customId === 'select-channel') {
-                    const selectedChannel = interaction.values[0];
-                    db.set('logChannel', selectedChannel);
+                    // Vérifier les permissions de configuration
+                    const permCheck = PermissionManager.checkMemberPermissions(
+                        interaction.member,
+                        PermissionManager.getRequiredConfigPermissions()
+                    );
 
+                    if (!permCheck.has) {
+                        return interaction.reply({
+                            content: PermissionManager.getMissingPermissionsMessage(
+                                interaction.guildId,
+                                permCheck.missing,
+                                false
+                            ),
+                            ephemeral: true
+                        });
+                    }
+
+                    const selectedChannel = interaction.values[0];
                     const logChannel = client.channels.cache.get(selectedChannel);
+                    
+                    if (!logChannel) {
+                        return interaction.reply({
+                            content: '❌ Salon introuvable. Veuillez réessayer.',
+                            ephemeral: true
+                        });
+                    }
+
+                    // Vérifier que le bot a les permissions nécessaires dans ce salon
+                    const botPermCheck = PermissionManager.checkBotPermissions(
+                        logChannel,
+                        PermissionManager.getRequiredLogChannelPermissions()
+                    );
+
+                    if (!botPermCheck.has) {
+                        return interaction.reply({
+                            content: PermissionManager.getMissingPermissionsMessage(
+                                interaction.guildId,
+                                botPermCheck.missing,
+                                true
+                            ),
+                            ephemeral: true
+                        });
+                    }
+
+                    // Sauvegarder la configuration
+                    db.set('logChannel', selectedChannel);
                     const logConfig = db.get('logConfig') || [];
                     
                     const confirmationEmbed = new EmbedBuilder()
@@ -125,6 +195,10 @@ module.exports = {
                         await logChannel.send({ embeds: [confirmationEmbed] });
                     } catch (error) {
                         console.error('Erreur lors de l\'envoi du message de confirmation:', error);
+                        return interaction.reply({
+                            content: `⚠️ Configuration sauvegardée mais impossible d'envoyer le message de confirmation dans <#${selectedChannel}>. Vérifiez les permissions du bot.`,
+                            ephemeral: true
+                        });
                     }
 
                     await interaction.reply({ 
