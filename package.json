@@ -1,0 +1,26 @@
+{
+  "name": "discord-bot-logger",
+  "version": "2.0.0",
+  "description": "Bot Discord avancé pour logger les événements de serveur avec support multilingue",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "logger",
+    "logging",
+    "moderation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "@discordjs/rest": "^2.2.0",
+    "discord-api-types": "^0.37.64",
+    "dotenv": "^16.3.1"
+  }
+}
+
