@@ -1,4 +1,4 @@
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { getDatabase } = require('../utils/database');
 const translations = require('../config/translations');
 
@@ -15,7 +15,7 @@ module.exports = {
         if (logConfig.length === 0 && !logChannelId) {
             return interaction.reply({
                 content: lang.logsNotConfigured,
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 
@@ -52,7 +52,7 @@ module.exports = {
             inline: true
         });
 
-        await interaction.reply({ embeds: [infoEmbed], ephemeral: true });
+        await interaction.reply({ embeds: [infoEmbed], flags: MessageFlags.Ephemeral });
     },
 };
 

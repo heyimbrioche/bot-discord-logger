@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, MessageFlags } = require('discord.js');
 const { getDatabase } = require('../utils/database');
 const translations = require('../config/translations');
 
@@ -24,7 +24,7 @@ module.exports = {
                 )
         );
 
-        await interaction.reply({ embeds: [languageEmbed], components: [languageRow], ephemeral: true });
+        await interaction.reply({ embeds: [languageEmbed], components: [languageRow], flags: MessageFlags.Ephemeral });
     },
 };
 

@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { getDatabase } = require('../utils/database');
 const translations = require('../config/translations');
 
@@ -12,7 +12,7 @@ module.exports = {
             const lang = translations[db.get('language')] || translations.fr;
             return interaction.reply({
                 content: lang.noPerms,
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 
@@ -22,7 +22,7 @@ module.exports = {
         if (!db.get('language')) {
             return interaction.reply({
                 content: translations.fr.noLangSetup,
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 
@@ -41,7 +41,7 @@ module.exports = {
                 .setEmoji('🛠️')
         );
 
-        await interaction.reply({ embeds: [setupEmbed], components: [setupRow], ephemeral: true });
+        await interaction.reply({ embeds: [setupEmbed], components: [setupRow], flags: MessageFlags.Ephemeral });
     },
 };
 

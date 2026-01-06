@@ -1,4 +1,4 @@
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { getDatabase } = require('../utils/database');
 const translations = require('../config/translations');
 
@@ -47,7 +47,7 @@ module.exports = {
             });
         }
 
-        await interaction.reply({ embeds: [statsEmbed], ephemeral: true });
+        await interaction.reply({ embeds: [statsEmbed], flags: MessageFlags.Ephemeral });
     },
 };
 

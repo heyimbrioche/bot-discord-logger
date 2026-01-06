@@ -1,4 +1,4 @@
-const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { getDatabase } = require('../utils/database');
 const translations = require('../config/translations');
 const PermissionManager = require('../utils/permissions');
@@ -16,7 +16,7 @@ module.exports = {
         if (!botMember) {
             return interaction.reply({
                 content: '❌ Impossible de récupérer les informations du bot.',
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             });
         }
 
@@ -114,7 +114,7 @@ module.exports = {
             });
         }
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     },
 };
 

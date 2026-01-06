@@ -14,8 +14,20 @@
     "logging",
     "moderation"
   ],
-  "author": "",
+  "author": {
+    "name": "heyimbrioche",
+    "email": "heyimbrioche@duck.com",
+    "url": "https://github.com/heyimbrioche"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heyimbrioche/bot-discord-logger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/heyimbrioche/bot-discord-logger/issues"
+  },
+  "homepage": "https://github.com/heyimbrioche/bot-discord-logger#readme",
   "dependencies": {
     "discord.js": "^14.14.1",
     "@discordjs/rest": "^2.2.0",

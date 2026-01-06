@@ -1,4 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, ChannelType, PermissionFlagsBits } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, ChannelType, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const { EmbedBuilder } = require('discord.js');
 const { getDatabase } = require('../utils/database');
 const translations = require('../config/translations');
@@ -15,7 +15,7 @@ module.exports = {
                 if (interaction.isRepliable()) {
                     return interaction.reply({
                         content: '❌ Ce bot ne fonctionne que dans les serveurs Discord.',
-                        ephemeral: true
+                        flags: MessageFlags.Ephemeral
                     });
                 }
                 return;
@@ -50,7 +50,7 @@ module.exports = {
                                 permCheck.missing,
                                 false
                             ),
-                            ephemeral: true
+                            flags: MessageFlags.Ephemeral
                         });
                     }
                     const logSelectionEmbed = new EmbedBuilder()
@@ -80,7 +80,7 @@ module.exports = {
                             )
                     );
 
-                    await interaction.reply({ embeds: [logSelectionEmbed], components: [logRow], ephemeral: true });
+                    await interaction.reply({ embeds: [logSelectionEmbed], components: [logRow], flags: MessageFlags.Ephemeral });
                 }
             }
 
@@ -95,7 +95,7 @@ module.exports = {
                     db.set('language', selectedLang);
                     await interaction.reply({ 
                         content: `${lang.languageSet}${selectedLang.toUpperCase()}`, 
-                        ephemeral: true 
+                        flags: MessageFlags.Ephemeral 
                     });
                 }
 
@@ -116,7 +116,7 @@ module.exports = {
                     if (availableChannels.length === 0) {
                         return interaction.reply({
                             content: '❌ Aucun salon texte disponible sur ce serveur.',
-                            ephemeral: true
+                            flags: MessageFlags.Ephemeral
                         });
                     }
 
@@ -132,7 +132,7 @@ module.exports = {
                             .addOptions(availableChannels)
                     );
 
-                    await interaction.reply({ embeds: [channelSelectionEmbed], components: [channelRow], ephemeral: true });
+                    await interaction.reply({ embeds: [channelSelectionEmbed], components: [channelRow], flags: MessageFlags.Ephemeral });
                 }
 
                 // Sélection du salon pour les logs
@@ -150,7 +150,7 @@ module.exports = {
                                 permCheck.missing,
                                 false
                             ),
-                            ephemeral: true
+                            flags: MessageFlags.Ephemeral
                         });
                     }
 
@@ -160,7 +160,7 @@ module.exports = {
                     if (!logChannel) {
                         return interaction.reply({
                             content: '❌ Salon introuvable. Veuillez réessayer.',
-                            ephemeral: true
+                            flags: MessageFlags.Ephemeral
                         });
                     }
 
@@ -177,7 +177,7 @@ module.exports = {
                                 botPermCheck.missing,
                                 true
                             ),
-                            ephemeral: true
+                            flags: MessageFlags.Ephemeral
                         });
                     }
 
@@ -197,13 +197,13 @@ module.exports = {
                         console.error('Erreur lors de l\'envoi du message de confirmation:', error);
                         return interaction.reply({
                             content: `⚠️ Configuration sauvegardée mais impossible d'envoyer le message de confirmation dans <#${selectedChannel}>. Vérifiez les permissions du bot.`,
-                            ephemeral: true
+                            flags: MessageFlags.Ephemeral
                         });
                     }
 
                     await interaction.reply({ 
                         content: `${lang.configSaved}\n${lang.logsActivated}Les logs seront envoyés dans <#${selectedChannel}>`, 
-                        ephemeral: true 
+                        flags: MessageFlags.Ephemeral 
                     });
                 }
             }
@@ -213,12 +213,12 @@ module.exports = {
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({ 
                     content: '❌ Une erreur s\'est produite lors du traitement de votre interaction.', 
-                    ephemeral: true 
+                    flags: MessageFlags.Ephemeral 
                 });
             } else {
                 await interaction.reply({ 
                     content: '❌ Une erreur s\'est produite lors du traitement de votre interaction.', 
-                    ephemeral: true 
+                    flags: MessageFlags.Ephemeral 
                 });
             }
         }
